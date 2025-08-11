@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Jun!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #0e2648);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .main-container {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            z-index: 10;
+            margin-bottom: 120px;
+        }
+        
+        .date-text {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            letter-spacing: 3px;
+            animation: fadeInOut 3s infinite alternate;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .main-text {
+            position: relative;
+            z-index: 3;
+            color: #003c7e;
+            font-size: 5.5rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-shadow: 
+                0 0 15px #ffffff, 
+                0 0 25px #0066cc, 
+                0 0 40px #004d99;
+            animation: textAnimation 2s ease-in-out infinite alternate;
+        }
+        
+        .image-container {
+            position: absolute;
+            bottom: -5px;
+            right: -15px;
+            z-index: 4;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+            animation: floatImage 5s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(0);
+        }
+        
+        @keyframes floatImage {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(3deg); }
+            50% { transform: translateY(-20px) rotate(-3deg); }
+            75% { transform: translateY(-10px) rotate(2deg); }
+        }
+        
+        @keyframes textAnimation {
+            0% {
+                transform: scale(1) translateY(0);
+                text-shadow: 
+                    0 0 15px #ffffff, 
+                    0 0 25px #0066cc, 
+                    0 0 40px #004d99;
+            }
+            50% {
+                transform: scale(1.08) translateY(-5px);
+                text-shadow: 
+                    0 0 20px #ffffff, 
+                    0 0 35px #0088ff, 
+                    0 0 50px #0066cc;
+            }
+            100% {
+                transform: scale(1.05) translateY(-3px);
+                text-shadow: 
+                    0 0 18px #ffffff, 
+                    0 0 30px #0077e6, 
+                    0 0 45px #0055aa;
+            }
+        }
+        
+        /* 弹幕样式 */
+        .barrage {
+            position: absolute;
+            white-space: nowrap;
+            z-index: 2;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1.2rem;
+            animation: barrageAnimation linear forwards;
+        }
+        
+        @keyframes barrageAnimation {
+            from { transform: translateX(100vw); }
+            to { transform: translateX(-100%); }
+        }
+        
+        /* 输入区域样式 */
+        .input-container {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 20;
+            padding: 0 20px;
+        }
+        
+        .input-box {
+            display: flex;
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+        }
+        
+        #messageInput::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        #submitBtn {
+            background: linear-gradient(45deg, #ff8c66, #ff6666);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #submitBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 140, 102, 0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .date-text {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+            
+            .main-text {
+                font-size: 3.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .image-container {
+                width: 80px;
+                height: 80px;
+                right: -5px;
+            }
+            
+            .input-box {
+                max-width: 90%;
+            }
+            
+            #messageInput {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+            
+            #submitBtn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="birthdayCanvas"></canvas>
+    
+    <div class="main-container">
+        <div class="date-text">2025.08.16</div>
+        <div class="main-text">HBD to Jun</div>
+        <div class="image-container">
+            <!-- 使用云端图片 -->
+            <img src="https://p.sda1.dev/26/7799a351acfa5db022f879b76a84151b/YOUR_IMAGE.png"  alt="Birthday Photo" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+    </div>
+    
+    <!-- 弹幕容器 -->
+    <div id="barrageContainer"></div>
+    
+    <!-- 输入区域 -->
+    <div class="input-container">
+        <div class="input-box">
+            <input type="text" id="messageInput" placeholder="写下你的祝福...">
+            <button id="submitBtn">发送祝福</button>
+        </div>
+    </div>
+    
+    <audio id="birthdayAudio" autoplay>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-happy-birthday-to-you-443.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('birthdayCanvas');
+            const ctx = canvas.getContext('2d');
+            const emojis = ['🎂', '🎁', '🎉', '🎈', '✨'];
+            const particles = [];
+            const barrageContainer = document.getElementById('barrageContainer');
+            const messageInput = document.getElementById('messageInput');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // 设置canvas尺寸为窗口大小
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 生日元素粒子类
+            class BirthdayParticle {
+                constructor(x, y) {
+                    this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    // 根据屏幕尺寸调整emoji大小
+                    if (window.innerWidth > 768) {
+                        // 电脑端：30-80px
+                        this.size = Math.random() * 50 + 30;
+                    } else {
+                        // 移动端：20-50px
+                        this.size = Math.random() * 30 + 20;
+                    }
+                    
+                    this.x = x || Math.random() * canvas.width;
+                    this.y = y || -50;
+                    this.speedX = Math.random() * 3 - 1.5;
+                    this.speedY = Math.random() * 3 + 2;
+                    this.opacity = Math.random() * 0.7 + 0.3;
+                    this.rotation = Math.random() * 360;
+                    this.rotationSpeed = Math.random() * 4 - 2;
+                    this.glowIntensity = Math.random() * 0.5 + 0.5;
+                    this.glowDirection = Math.random() > 0.5 ? 1 : -1;
+                    this.glowChangeSpeed = Math.random() * 0.02 + 0.01;
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.rotation += this.rotationSpeed;
+                    
+                    // 改变发光强度
+                    this.glowIntensity += this.glowChangeSpeed * this.glowDirection;
+                    if (this.glowIntensity > 1 || this.glowIntensity < 0.5) {
+                        this.glowDirection *= -1;
+                    }
+                    
+                    // 如果粒子离开屏幕，重新设置位置
+                    if (this.y > canvas.height || 
+                        this.x > canvas.width + 100 || 
+                        this.x < -100) {
+                        this.reset();
+                    }
+                }
+                
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = -50;
+                    this.speedX = Math.random() * 3 - 1.5;
+                    this.speedY = Math.random() * 3 + 2;
+                    this.opacity = Math.random() * 0.7 + 0.3;
+                    
+                    // 重置时也根据屏幕尺寸调整大小
+                    if (window.innerWidth > 768) {
+                        this.size = Math.random() * 50 + 30;
+                    } else {
+                        this.size = Math.random() * 30 + 20;
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.opacity;
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    
+                    // 添加发光效果
+                    ctx.shadowColor = this.getGlowColor();
+                    ctx.shadowBlur = 25 * this.glowIntensity;
+                    
+                    ctx.font = `${this.size}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(this.emoji, 0, 0);
+                    
+                    ctx.restore();
+                }
+                
+                getGlowColor() {
+                    const colors = {
+                        '🎂': '#ff8c66',
+                        '🎁': '#66b3ff',
+                        '🎉': '#ffcc66',
+                        '🎈': '#ff6666',
+                        '✨': '#ffffff'
+                    };
+                    return colors[this.emoji] || '#ffffff';
+                }
+            }
+            
+            // 创建初始粒子
+            function createInitialParticles() {
+                const count = Math.min(Math.floor((canvas.width * canvas.height) / 3000), 120);
+                for (let i = 0; i < count; i++) {
+                    particles.push(new BirthdayParticle());
+                }
+            }
+            
+            // 点击添加粒子的处理
+            canvas.addEventListener('click', (e) => {
+                for (let i = 0; i < 10; i++) {
+                    const xOffset = Math.random() * 50 - 25;
+                    const yOffset = Math.random() * 50 - 25;
+                    particles.push(new BirthdayParticle(e.clientX + xOffset, e.clientY + yOffset));
+                }
+            });
+            
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制背景效果
+                drawBackground();
+                
+                // 绘制所有粒子
+                particles.forEach((particle, index) => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // 绘制背景光效
+            function drawBackground() {
+                ctx.fillStyle = 'rgba(10, 25, 47, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 添加一些光点效果
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const r = Math.random() * 3 + 1;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fill();
+                }
+            }
+            
+            // 处理音频自动播放
+            document.addEventListener('click', function audioInit() {
+                const audio = document.getElementById('birthdayAudio');
+                if (audio.paused) {
+                    audio.play().catch(e => console.log('Auto-play was prevented'));
+                }
+                document.removeEventListener('click', audioInit);
+            });
+            
+            // 弹幕功能
+            function createBarrage(message) {
+                const barrage = document.createElement('div');
+                barrage.className = 'barrage';
+                barrage.textContent = message;
+                
+                // 随机位置和速度（加快流速）
+                const top = Math.random() * (window.innerHeight - 100) + 50;
+                // 加快弹幕流速：持续时间缩短为8-15秒
+                const duration = Math.random() * 7 + 8; 
+                
+                barrage.style.top = `${top}px`;
+                barrage.style.animationDuration = `${duration}s`;
+                
+                barrageContainer.appendChild(barrage);
+                
+                // 移除弹幕元素
+                setTimeout(() => {
+                    barrage.remove();
+                }, duration * 1000);
+            }
+            
+            // 提交祝福
+            submitBtn.addEventListener('click', () => {
+                const message = messageInput.value.trim();
+                if (message) {
+                    createBarrage(message);
+                    messageInput.value = '';
+                }
+            });
+            
+            // 按Enter键提交
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    submitBtn.click();
+                }
+            });
+            
+            // 创建一些初始祝福弹幕
+   const initialMessages = [
+                "生日快乐，俊困！",
+                "祝我推生日快乐！！",
+                "永远喜欢你",
+                "Happy Birthday Jun!",
+                "祝你走上更大的舞台",
+                "纯君生日快乐，天天开心！",
+                "你被所有人真切地爱着"
+            ];
+            
+            // 初始化弹幕
+            function initBarrages() {
+                initialMessages.forEach((msg, i) => {
+                    setTimeout(() => {
+                        createBarrage(msg);
+                    }, i * 2000); // 加快初始弹幕出现速度
+                });
+            }
+            
+            createInitialParticles();
+            animate();
+            initBarrages();
+        });
+    </script>
+</body>
+</html>
